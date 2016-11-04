@@ -55,7 +55,7 @@ class ProgressBot:
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is KeyboardInterrupt:
             msg = "The task <b>{task}</b> was interrupted.".format(
-                    task = task)
+                    task = self.task)
         else:
             msg = "The task <b>{task}</b> is complete.".format(
                     task = self.task)
