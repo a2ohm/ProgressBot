@@ -7,7 +7,7 @@ import traceback
 from datetime import datetime, timedelta
 
 class ProgressBot:
-    def __init__(self, task = "", updates = (0.1, 60)):
+    def __init__(self, task = "", updates = (0.1, 5*60)):
 
         """Init the bot."""
 
