@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 # -*- coding:utf-8 -*-
 
+import emoji
 import telepot
 import traceback
 from datetime import datetime, timedelta
@@ -50,10 +51,10 @@ class ProgressBot:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is KeyboardInterrupt:
-            msg = "The task <b>{task}</b> was interrupted.".format(
+            msg = "The task <b>{task}</b> was interrupted. :confounded_face:".format(
                     task = self.task)
         else:
-            msg = "The task <b>{task}</b> is complete.".format(
+            msg = "The task <b>{task}</b> is complete. :grinning_face_with_smiling_eyes:".format(
                     task = self.task)
 
         self.sendMessage(msg)
@@ -84,6 +85,8 @@ class ProgressBot:
 
 
     def sendMessage(self, msg):
+        # Emojize the message
+        msg = emoji.emojize(msg)
         self.bot.sendMessage(self.chat_id, msg, parse_mode = "HTML")
 
     def handle(self, msg):
@@ -108,6 +111,15 @@ class ProgressBot:
 # API
 
     def info(self, msg):
+        msg = '<b>[Info]</b> ' + msg
+        self.sendMessage(msg)
+
+    def warning(self, msg):
+        msg = ':warning_sign: <b>[Warning]</b> ' + msg
+        self.sendMessage(msg)
+
+    def error(self, msg, force = True):
+        msg = ':fearful_face: <b> [Error]</b> ' + msg
         self.sendMessage(msg)
 
     def tick(self, progress):
@@ -158,7 +170,12 @@ if __name__ == '__main__':
 
     task= "Example"
     with ProgressBot(task, updates = (0.2, 60)) as pbot:
-        for i in range(10):
-            time.sleep(1)
-            pbot.tick(progress = i/10)
+        #for i in range(10):
+        #    time.sleep(1)
+        #    pbot.tick(progress = i/10)
+
+        # Test logging functions
+        pbot.info('This is an info.')
+        pbot.warning('This is a warning.')
+        pbot.error('This is an error.')
 
