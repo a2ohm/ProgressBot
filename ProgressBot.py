@@ -105,6 +105,11 @@ class ProgressBot:
             elif msg['text'] == '/unmute':
                 self.F_mute = False
 
+# API
+
+    def info(self, msg):
+        self.sendMessage(msg)
+
     def tick(self, progress):
         # Turn off the silentMode
         self.F_silentMode = False
@@ -156,4 +161,4 @@ if __name__ == '__main__':
         for i in range(10):
             time.sleep(1)
             pbot.tick(progress = i/10)
-            
+
