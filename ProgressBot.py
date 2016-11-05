@@ -23,7 +23,12 @@ class ProgressBot:
 
         # Create intern flags
         self.F_pause = False
+        #   F_silentMode: stay silent until the first tick. This is a
+        #                 trick to ignore commands send between two
+        #                 runs.
         self.F_silentMode = True
+        #   F_mute: turn it on to mute tick reports.
+        self.F_mute = False
 
     def __enter__(self):
         msg = "Hello, I am looking on a new task: <b>{task}</b>.".format(
@@ -95,6 +100,10 @@ class ProgressBot:
                 self.send_status(cmt = "resume")
             elif msg['text'] == '/status':
                 self.send_status()
+            elif msg['text'] == '/mute':
+                self.F_mute = True
+            elif msg['text'] == '/unmute':
+                self.F_mute = False
 
     def tick(self, progress):
         # Turn off the silentMode
@@ -115,8 +124,12 @@ class ProgressBot:
         if datetime.now() - self.last_time_update >= timedelta(seconds=self.update_time_rate):
             self.send_status()
 
-    def send_status(self, cmt = ""):
+    def send_status(self, cmt = "", force = False):
         """Send the current status of the task."""
+        # Return without sending anything if mute
+        if self.F_mute and not force:
+            return
+
         # Send the current status
         if cmt:
             msg = "{timestamp} − {progress:3.0f}% ({cmt})".format(
