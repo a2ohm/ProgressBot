@@ -6,29 +6,20 @@ import traceback
 from datetime import datetime, timedelta
 
 class ProgressBot:
-    def __init__(self, token, chat_id = None,
-            task = "",
-            updates = (0.1, 60)):
+    def __init__(self, task = "", updates = (0.1, 60)):
 
         """Init the bot."""
+
+        # Load the config file
+        self.loadConfig()
 
         # Save parameters
         self.task = task
         self.update_percent_rate = updates[0]
         self.update_time_rate = updates[1]
 
-        if not chat_id:
-            # If the chat_id is None, maybe it is because it is still
-            # unknown. So invite the user to use the get_chat_id
-            # script to retrieve it.
-            print("Hello, you didn't provide any chat_id. Maybe you do not know it. The get_chat_id in the tools directory may help you with this issue.")
-
-            raise ValueError("Youhave to provide a valid chat_id, use the get_chat_id script to get help with that.")
-        else:
-            self.chat_id = chat_id
-
         # Create the bot
-        self.bot = telepot.Bot(token)
+        self.bot = telepot.Bot(self.token)
 
         # Create intern flags
         self.F_pause = False
@@ -62,6 +53,30 @@ class ProgressBot:
 
         self.sendMessage(msg)
         return True
+
+    def loadConfig(self):
+        with open('./ProgressBot.cfg', 'r') as f:
+            for line in f.readlines():
+                if line[0] == '#':
+                    continue
+
+                parsed_line = line.split('=')
+                if parsed_line[0] == 'token':
+                    if len(parsed_line) == 2:
+                        self.token = parsed_line[1].strip()
+                    else:
+                        raise ValueError("Please provide a valid tokken in ProgressBot.cfg")
+
+                if parsed_line[0] == 'chat_id':
+                    if len(parsed_line) == 2:
+                        self.chat_id = parsed_line[1].strip()
+                    else:
+                        # If the chat_id is empty, maybe it is because
+                        # it is still unknown.
+                        print("Hello, you didn't provide any chat_id. Maybe you do not know it. The get_chat_id in the tools directory may help you with this issue.")
+
+                        raise ValueError("You have to provide a valid chat_id, use the get_chat_id script to get help with that.")
+
 
     def sendMessage(self, msg):
         self.bot.sendMessage(self.chat_id, msg, parse_mode = "HTML")
@@ -123,10 +138,8 @@ if __name__ == '__main__':
     # Demo of ProgressBot
     import time
 
-    token = "PUT_YOUR_TOKKEN_HERE"
-    chat_id = "PUT_YOUR_CHAT_ID_HERE"
     task= "Example"
-    with ProgressBot(token, chat_id, task, updates = (0.2, 60)) as pbot:
+    with ProgressBot(task, updates = (0.2, 60)) as pbot:
         for i in range(10):
             time.sleep(1)
             pbot.tick(progress = i/10)

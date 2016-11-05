@@ -1,0 +1,8 @@
+# Provide here the tokken of your bot.
+# You can retrieve it from the BotFather.
+token=
+
+# Provide here the chat_id that identify the chat room between
+# you and ProgressBot. The tool/get_chat_id.py script is there
+# to help you.
+chat_id=
